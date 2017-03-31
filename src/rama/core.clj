@@ -9,39 +9,41 @@
             ))
 
 
-
 (defn default-wrappers [config handler]
   (let [{:keys [name description path]} (:api config)]
     (api
-     ;;
-     ;; API docs
-     ;;
-     {:swagger
-      {:ui (or path "/api-docs")
-       :spec "/swagger.json"
-       :data {:info {:title (or (str name " API") "API")
-                     :description (or description "Just another API")}
-              :tags [{:name "api", :description (or description "Just another API")}]}}}
-     ;;
-     ;; Health check
-     ;;
-     (GET "/healthcheck" []
-          :summary "Returns 200 ok if the service is running"
-          :return {:message String}
-          {:satus 200 :body {:message "OK"}})
+      ;;
+      ;; API docs
+      ;;
+      {:swagger
+       {:ui   (or path "/api-docs")
+        :spec "/swagger.json"
+        :data {:info {:title       (or (str name " API") "API")
+                      :description (or description "Just another API")}
+               :tags [{:name "api", :description (or description "Just another API")}]}}}
+      ;;
+      ;; Health check
+      ;;
+      (GET "/healthcheck" []
+        :summary "Returns 200 ok if the service is running"
+        :return {:message String}
+        {:satus 200 :body {:message "OK"}})
 
-     ;;
-     ;; Application handlers
-     ;;
-     handler
+      ;;
+      ;; Application handlers
+      ;;
+      handler
 
-     ;;
-     ;; everything else is NOT FOUND
-     ;;
-     (undocumented
-      (fn [_]
-        {:status 404 :body {:message "Not found"}})))))
+      ;;
+      ;; everything else is NOT FOUND
+      ;;
+      (undocumented
+        (fn [_]
+          {:status 404 :body {:message "Not found"}})))))
 
+(defn readfile [file]
+  (safely (-> file slurp edn/read-string)
+          :on-error :log-level :trace :default nil))
 
 (defn config
   ([]
@@ -52,11 +54,17 @@
         (some config)))
   ([file]
    (when file
-     (let [config (safely (-> file slurp edn/read-string)
-                          :on-error :log-level :trace :default nil)]
+     (let [config (readfile file)]
        (log/debug "Attempting to read configuration from:"
                   file (if config "OK!" "FAIL!"))
-       config))))
+       config)))
+  ([file secret-file]
+   (when file
+     (let [config (readfile file)
+           secret (readfile secret-file)]
+       (log/debug "Attempting to read configuration and secret data from:"
+                  file "-" secret-file (if (and config secret) "OK!" "FAIL!"))
+       (merge config secret)))))
 
 
 (defn start-server [{:keys [server] :as config} handler]
