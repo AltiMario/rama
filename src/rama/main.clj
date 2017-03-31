@@ -7,22 +7,23 @@
 
 (defn- resolve-handler!! [type handler]
   (or
-   (safely
-    (require (symbol (namespace handler)))
-    (resolve handler)
-    :on-error :default nil)
-   (log/error "Couldn't resolve the" type "handler" handler
-              ", please ensure it is available in the classpath.")
-   (System/exit 1)))
+    (safely
+      (require (symbol (namespace handler)))
+      (resolve handler)
+      :on-error :default nil)
+    (log/error "Couldn't resolve the" type "handler" handler
+               ", please ensure it is available in the classpath.")
+    (System/exit 1)))
 
 
 (defn- resolve-config!!
-  [file]
+  [file secret]
   (or
-   (r/config file)
-   (r/config)
-   (log/error "Couldn't load the application config.")
-   (System/exit 1)))
+    (r/config file secret)
+    (r/config file)
+    (r/config)
+    (log/error "Couldn't load the application config.")
+    (System/exit 1)))
 
 
 (defn start! [{:keys [server init handler] :as cfg}]
@@ -36,5 +37,5 @@
 
 
 (defn -main [& args]
-  (start! (resolve-config!! (first args)))
+  (start! (resolve-config!! (first args) (second args)))
   @(promise))
