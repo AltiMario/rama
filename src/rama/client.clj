@@ -62,7 +62,7 @@
   [data & {:keys [pretty] :or {pretty false}}]
   (when data
     (-> data
-        (json/generate-string {:pretty pretty :date-format "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"})
+        (json/generate-string {:pretty pretty :date-format "yyyy-MM-dd'T'HH:mm:ss.SSSX"})
         ((fn [s] (if pretty (str s \newline) s))))))
 
 
