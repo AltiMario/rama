@@ -2,6 +2,11 @@
 
 A Clojure library designed to facilitate development of efficient RESTful MicroServices, by Bruno Bonacci
 
+
+## Develoment
+
+  * Circle CI: [![Circle CI](https://circleci.com/gh/AltiMario/rama/tree/master.svg?style=svg)](https://circleci.com/gh/AltiMario/rama/tree/master)
+
 ## Usage
 
 ``` clojure
