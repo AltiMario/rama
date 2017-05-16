@@ -127,38 +127,38 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defn get
+(defn http-get
   "HTTP GET method with body encoding in transit+json"
   ([url]
-   (get url nil nil))
+   (http-get url nil nil))
   ([url body]
-   (get url body nil))
+   (http-get url body nil))
   ([url body {:keys [connection-timeout request-timeout pool-timeout] :as opts}]
    (http-request :get url body (merge transit-opts opts))))
 
 
-(defn post
+(defn http-post
   "HTTP POST method with body encoding in transit+json"
   ([url body]
-   (post url body nil))
+   (http-post url body nil))
   ([url body {:keys [connection-timeout request-timeout pool-timeout] :as opts}]
    (http-request :post url body (merge transit-opts opts))))
 
 
-(defn put
+(defn http-put
   "HTTP PUT method with body encoding in transit+json"
   ([url body]
-   (put url body nil))
+   (http-put url body nil))
   ([url body {:keys [connection-timeout request-timeout pool-timeout] :as opts}]
    (http-request :put url body (merge transit-opts opts))))
 
 
-(defn delete
+(defn http-delete
   "HTTP DELETE method with body encoding in transit+json"
   ([url]
-   (delete url nil nil))
+   (http-delete url nil nil))
   ([url body]
-   (delete url body nil))
+   (http-delete url body nil))
   ([url body {:keys [connection-timeout request-timeout pool-timeout] :as opts}]
    (http-request :delete url body (merge transit-opts opts))))
 

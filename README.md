@@ -27,6 +27,9 @@ cat > config/config.edn <<\EOF
 
 EOF
 
+Fields :api, :handler and :init may be nil.
+You can add field :running-in-test? true if you run tests and don't want to start Aleph web server.
+
 ```
 
 * Edit your project file and add the dependency
@@ -60,7 +63,6 @@ Then create your routes **src/sample/core.clj**:
 
 (defn init! [config]
   (log/info "init started.")
-  ;; init your db connection here
   )
 
 
@@ -96,10 +98,11 @@ To start on the REPL use:
 
 ``` clojure
 
-(require '[rama.main :refer [start!]]
-         '[rama.core :as r])
+(require '[rama.main :as rm]
+         '[mount.core :as mc])
 
-(def server (start! (r/config "config/config.edn")))
+(rm/set-conf-paths "config/config.edn")
+(mc/mount/start)
 
 ```
 
