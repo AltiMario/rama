@@ -136,7 +136,7 @@ Fix your `project.clj` dependencies to look like:
 
 ## License
 
-Copyright © 2016 Bruno Bonacci
+Copyright © 2016-17 Bruno Bonacci
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.

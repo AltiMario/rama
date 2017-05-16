@@ -1,4 +1,4 @@
-(defproject rama "1.0"
+(defproject rama "1.1"
   :description "Library designed to facilitate development of efficient RESTful MicroServices, by Bruno Bonacci"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
