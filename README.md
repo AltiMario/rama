@@ -98,11 +98,10 @@ To start on the REPL use:
 
 ``` clojure
 
-(require '[rama.main :as rm]
-         '[mount.core :as mc])
+(require '[rama.main :as rm])
 
 (rm/set-conf-paths "config/config.edn")
-(mc/mount/start)
+(mount/start)
 
 ```
 

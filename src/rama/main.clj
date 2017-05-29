@@ -6,7 +6,7 @@
             [clojure.edn            :as edn]
             [aleph.http             :as http]
             [compojure.api.sweet    :refer :all]
-            [compojure.route :as route])
+            [compojure.route        :as route])
   (:gen-class))
 
 (def path-to-conf (atom nil))                               ;we can replace value with needed path in repl and remount
@@ -65,13 +65,6 @@
 (defn define-urls [config handler]
   (let [{:keys [name description path]} (:api config)
         default-urls  (list
-                        {:swagger
-                         {:ui   (or path "/api-docs")
-                          :spec "/swagger.json"
-                          :data {:info {:title       (or (str name " API") "API")
-                                        :description (or description "Just another API")}
-                                 :tags [{:name "api", :description (or description "Just another API")}]}}
-                         }
                         (GET "/healthcheck" []
                           :summary "Returns 200 ok if the service is running"
                           :return {:message String}
@@ -96,10 +89,22 @@
                           )
                         (route/not-found "No such page.")
                         )
-        ]
+		swagger-props	{:swagger
+							{:ui   (or path "/api-docs")
+							:spec "/swagger.json"
+							:data 
+								{:info 
+									{
+									:title	(or (str name " API") "API")
+									:description (or description "Just another API")
+									}
+								:tags [{:name "api", :description (or description "Just another API")}]
+								}
+							}
+						}]
     (if (not (nil? handler))
-      (into [] (conj default-urls handler))
-      (into [] (identity default-urls)))
+      (into [] (-> default-urls (conj handler) (conj swagger-props)) )
+      (into [] (-> default-urls (conj swagger-props))) )
     )
   )
 
