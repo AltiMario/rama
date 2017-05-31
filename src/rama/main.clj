@@ -68,13 +68,13 @@
                         (GET "/healthcheck" []
                           :summary "Returns 200 ok if the service is running"
                           :return {:message String}
-                          {:satus 200 :body {:message "OK"}}
+                          {:status 200 :body {:message "OK"}}
                           )
                         (GET "/shutdown" []
                           (shutdown-app)
                           :summary "Shutdown app"
                           :return {:message String}
-                          {:satus 200 :body {:message "OK"}}
+                          {:status 200 :body {:message "OK"}}
                           )
                         (GET "/reload-conf-and-server" []
                           (let [conf-path1 @path-to-conf
@@ -85,7 +85,7 @@
                             )
                           :summary "Reload conf and server"
                           :return {:message String}
-                          {:satus 200 :body {:message "OK"}}
+                          {:status 200 :body {:message "OK"}}
                           )
                         (route/not-found "No such page.")
                         )
