@@ -132,6 +132,46 @@
   (resolve-config!! @path-to-conf @path-to-conf-with-secret)
   )
 
+(defn create-app
+  [handler {:keys [name description path]
+            :or {name "API"
+                 description "Just another API"
+                 path "/api-docs"}}]
+  (api
+   ;;
+   ;; API docs
+   ;;
+   {:swagger
+    {:ui   path
+     :spec "/swagger.json"
+     :data {:info {:title       name
+                   :description description}
+            :tags [{:name "api", :description description}]}}}
+   ;;
+   ;; Health check
+   ;;
+   (GET "/healthcheck" []
+     :summary "Returns 200 ok if the service is running"
+     :return {:message String}
+     {:satus 200 :body {:message "OK"}})
+
+   ;;
+   ;; Application handlers
+   ;;
+   handler
+
+   ;;
+   ;; everything else is NOT FOUND
+   ;;
+   (undocumented
+    (fn [_]
+      {:status 404 :body {:message "Not found"}}))))
+
+(defn run-server
+  [handler {:keys [api server]}]
+  (let [app (create-app handler api)]
+    (http/start-server app server)))
+
 (defstate config
           :start (init-config))
 
