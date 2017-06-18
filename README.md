@@ -118,7 +118,7 @@ Rama can send healthcheck info to InfluxDB (exists in Samsara). For this just ad
 
 ```
 
-Then you can use next query in Graphana to see it: SELECT "value" FROM "healthcheck.xxx.yyy.zzz.iii.your_service_port.your_api_name_from_config". It will show "1" if health of your application is good.
+Then you can use next query in Graphana to see it: SELECT "value" FROM "healthcheck.your_api_name_from_config.xxx.yyy.zzz.iii.your_service_port". It will show "1" if health of your application is good.
 
 ## Troubleshooting.
 
