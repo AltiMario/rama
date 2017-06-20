@@ -105,6 +105,21 @@ To start on the REPL use:
 
 ```
 
+Rama can send healthcheck info to InfluxDB (exists in Samsara). For this just add to config.edn next lines:
+
+
+``` clojure
+
+ :metrics-reporter-config   {:reporting-frequency-seconds   10
+                             :host                          "xxx.yyy.zzz.iii"
+                             :port                          8086
+                             :db-name                       "YOUR_DB_NAME"
+                             :auth                          "YOUR_DB_LOGIN:YOUR_DB_PASSWORD"}
+
+```
+
+Then you can use next query in Graphana to see it: SELECT "value" FROM "healthcheck.your_api_name_from_config.xxx.yyy.zzz.iii.your_service_port". It will show "1" if health of your application is good.
+
 ## Troubleshooting.
 
 Datomic/netty incompatibility problem.

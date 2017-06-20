@@ -10,7 +10,9 @@
                  [ring/ring-json "0.4.0"]
                  [metosin/compojure-api "1.1.8"]
                  [com.cognitect/transit-clj "0.8.290"]
-                 [mount "0.1.11"]]
+                 [mount "0.1.11"]
+                 [samsara/trackit-all "0.6.0"]
+                 [samsara/trackit-influxdb "0.6.0"]]
 
   :main rama.main
 

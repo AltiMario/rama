@@ -6,7 +6,9 @@
             [clojure.edn            :as edn]
             [aleph.http             :as http]
             [compojure.api.sweet    :refer :all]
-            [compojure.route        :as route])
+            [compojure.route        :as route]
+            [samsara.trackit        :refer :all]
+            [rama.client            :as rc])
   (:gen-class))
 
 (def path-to-conf (atom nil))                               ;we can replace value with needed path in repl and remount
@@ -202,6 +204,59 @@
 (defstate server
           :start  (start-server)
           :stop   (stop-server))
+
+(defn- check-health [config]
+  (try
+    (let [url-response (rc/jget (str "http://localhost:" (get-in config [:server :port]) "/healthcheck"))]
+      (if (= (:message url-response) "OK")
+        1
+        0)
+      )
+    (catch Exception e
+      0))
+  )
+
+(defstate health-checker
+          :start (track-value-of (str "healthcheck"
+                                      "."
+                                      (if (some-> config :api :name)
+                                        (some-> config :api :name)
+                                        "rama")
+                                      "."
+                                      (.getHostAddress (java.net.InetAddress/getLocalHost))
+                                      "."
+                                      (-> config :server :port)
+                                      ".value"
+                                      )
+                                 (fn [] (check-health config))))
+
+(defn- start-metrics-reporter [config]
+  (if-let [reporter-config (:metrics-reporter-config config)]
+    {:reporter (start-reporting! {:type                         :influxdb
+                                  :rate-unit                    java.util.concurrent.TimeUnit/SECONDS
+                                  :duration-unit                java.util.concurrent.TimeUnit/MILLISECONDS
+                                  :reporting-frequency-seconds  (:reporting-frequency-seconds reporter-config)
+                                  :host                         (:host        reporter-config)
+                                  :port                         (:port        reporter-config)
+                                  :jvm-metrics                  :none
+                                  :db-name                      (:db-name     reporter-config)
+                                  :auth                         (:auth        reporter-config)
+                                  :tags                         {"host"       "shryne-node"
+                                                                 "version"    "0.9"}
+                                  })}
+    {:reporter -1}
+    )
+  )
+
+(defn- stop-metrics-reporter [reporter]
+  (when (not= -1 (:reporter reporter))
+    ((:reporter reporter))
+    )
+  )
+
+(defstate metrics-reporter
+          :start  (start-metrics-reporter config)
+          :stop   (stop-metrics-reporter metrics-reporter))
 
 (defn -main [& args]
   (pr-str "Args:")
